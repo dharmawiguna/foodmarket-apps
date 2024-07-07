@@ -1,12 +1,13 @@
+import Axios from 'axios';
 import React from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
+import {showMessage} from 'react-native-flash-message';
 import {useSelector} from 'react-redux';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Gap, Header, Select, TextInput} from '../../components';
 import {RootState} from '../../redux/store';
 import {useForm} from '../../utils';
-import Axios from 'axios';
 import constants from '../../utils/constants';
 
 interface SignUpAddressProps {
@@ -32,11 +33,41 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
     Axios.post(`${constants.DEFAULT_URL}/register`, data)
       .then(res => {
         console.log(res);
-        navigation.replace('SuccessSignUp');
+        showToast('Register Success', 'success');
+        setTimeout(() => {
+          navigation.replace('SuccessSignUp');
+        }, 2000);
       })
       .catch(err => {
-        console.log('Sign Up Error:', err);
+        showToast(err?.response?.data?.data?.message);
       });
+  };
+
+  // Assuming MessageType is defined like this:
+  type MessageType = 'info' | 'warning'; // Example definition
+
+  // Define the custom type for the showToast function
+  type CustomToastType = 'success' | 'error';
+
+  const showToast = (message: string, type: CustomToastType = 'error') => {
+    // Convert CustomToastType to MessageType
+    let messageType: MessageType | undefined;
+    switch (type) {
+      case 'success':
+        messageType = 'info';
+        break;
+      case 'error':
+        messageType = 'warning';
+        break;
+      default:
+        messageType = undefined;
+    }
+
+    showMessage({
+      message,
+      type: messageType,
+      backgroundColor: type === 'success' ? '#1ABC9C' : '#D9435E',
+    });
   };
 
   const options = [
