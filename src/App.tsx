@@ -11,7 +11,6 @@ import {Loading} from './components';
 
 const MainApp = () => {
   const {isLoading} = useSelector((state: RootState) => state.globalReducer);
-  console.log(isLoading);
 
   return (
     <SafeAreaProvider>

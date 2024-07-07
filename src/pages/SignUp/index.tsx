@@ -1,11 +1,21 @@
-import React from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useDispatch} from 'react-redux';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Gap, Header, TextInput} from '../../components';
-import {useForm} from '../../utils';
-import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../redux/store';
+import {useForm} from '../../utils';
+import * as ImagePicker from 'react-native-image-picker';
+import showMessage from '../../utils/ShowMessage';
 
 interface SignUpProps {
   navigation: any;
@@ -17,25 +27,59 @@ export function SignUp({navigation}: SignUpProps): JSX.Element {
     password: '',
   });
 
+  const [photo, setPhoto] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
   const onSubmit = () => {
-    console.log(form);
     dispatch({type: 'SET_REGISTER', value: form});
     navigation.navigate('SignUpAddress');
   };
+
+  const addPhoto = () => {
+    const options: ImagePicker.CameraOptions = {
+      mediaType: 'photo',
+    };
+
+    ImagePicker.launchImageLibrary(
+      options,
+      (response: ImagePicker.ImagePickerResponse) => {
+        if (response.didCancel || response.errorCode) {
+          showMessage('Anda tidak memiliki foto');
+        } else if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          const dataImage = {
+            uri: asset.uri,
+            type: asset.type,
+            name: asset.fileName,
+          };
+          if (asset.uri) {
+            setPhoto(asset.uri);
+            dispatch({type: 'SET_PHOTO', value: dataImage});
+            dispatch({type: 'SET_UPLOAD_STATUS', value: true});
+          }
+        }
+      },
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.contentScroll}>
       <SafeAreaView style={styles.page}>
         <Header title="Sign Up" subtitle="Register & eat" onBack />
         <View style={styles.container}>
-          <View style={styles.photo}>
-            <View style={styles.borderPhoto}>
-              <View style={styles.photoContainer}>
-                <Text style={styles.addPhoto}>Add Photo</Text>
+          <TouchableOpacity onPress={addPhoto}>
+            <View style={styles.photo}>
+              <View style={styles.borderPhoto}>
+                {photo ? (
+                  <Image source={{uri: photo}} style={styles.photoContainer} />
+                ) : (
+                  <View style={styles.photoContainer}>
+                    <Text style={styles.addPhoto}>Add Photo</Text>
+                  </View>
+                )}
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
           <TextInput
             label="Full Name"
             placeholder="type your full name"
@@ -77,7 +121,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     paddingHorizontal: 24,
-    marginTop: 24,
+    marginTop: 10,
     flex: 1,
   },
   photo: {
@@ -100,6 +144,8 @@ const styles = StyleSheet.create({
     width: 90,
     borderRadius: 90,
     backgroundColor: '#F0F0F0',
+    ...Gs.itemsCenter,
+    ...Gs.justifyCenter,
   },
   addPhoto: {
     fontSize: 14,

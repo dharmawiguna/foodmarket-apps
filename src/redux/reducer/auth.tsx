@@ -35,3 +35,52 @@ export const registerReducer = (
       return state;
   }
 };
+
+interface UploadPhotoState {
+  uri: string;
+  type: string;
+  name: string;
+  isUploadPhoto: boolean;
+}
+
+interface SetPhotoAction {
+  type: 'SET_PHOTO';
+  value: Partial<UploadPhotoState>;
+}
+
+interface SetUploadStatusAction {
+  type: 'SET_UPLOAD_STATUS';
+  value: boolean;
+}
+
+type ActionPhoto = SetPhotoAction | SetUploadStatusAction;
+
+const initStateUploadPhoto: UploadPhotoState = {
+  uri: '',
+  type: '',
+  name: '',
+  isUploadPhoto: false,
+};
+
+export const photoReducer = (
+  state = initStateUploadPhoto,
+  action: ActionPhoto,
+): UploadPhotoState => {
+  switch (action.type) {
+    case 'SET_PHOTO':
+      return {
+        ...state,
+        uri: action.value.uri || state.uri,
+        type: action.value.type || state.type,
+        name: action.value.name || state.name,
+      };
+    case 'SET_UPLOAD_STATUS':
+      return {
+        ...state,
+        isUploadPhoto: action.value,
+      };
+
+    default:
+      return state;
+  }
+};

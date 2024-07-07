@@ -1,13 +1,12 @@
 import Axios from 'axios';
 import React from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
-import {showMessage} from 'react-native-flash-message';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Gap, Header, Select, TextInput} from '../../components';
 import {AppDispatch, RootState} from '../../redux/store';
-import {useForm} from '../../utils';
+import {ShowMessage, useForm} from '../../utils';
 import constants from '../../utils/constants';
 
 interface SignUpAddressProps {
@@ -17,6 +16,15 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
   const registerReducer = useSelector(
     (state: RootState) => state.registerReducer,
   );
+  const photoReducer = useSelector((state: RootState) => state.photoReducer);
+
+  const {uri, isUploadPhoto} = photoReducer;
+
+  // async function uriToBlob(newuri: string): Promise<Blob> {
+  //   const response = await fetch(newuri);
+  //   const blob = await response.blob();
+  //   return blob;
+  // }
 
   const dispatch = useDispatch<AppDispatch>();
   const [form, setForm] = useForm({
@@ -35,8 +43,28 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
     dispatch({type: 'SET_LOADING', value: true});
     Axios.post(`${constants.DEFAULT_URL}/register`, data)
       .then(res => {
-        console.log(res);
-        showToast('Register Success', 'success');
+        if (isUploadPhoto && uri) {
+          const photoFormUpload = new FormData();
+          photoFormUpload.append('file', photoReducer); // Appending the Blob to FormData
+
+          const accessToken = res.data.data.access_token;
+
+          Axios.post(`${constants.DEFAULT_URL}/user/photo`, photoFormUpload, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+            .then(resUpload => {
+              console.log('Success Upload:', resUpload);
+            })
+            .catch(err => {
+              ShowMessage('Upload Failed!');
+              console.log(err);
+            });
+        }
+
+        ShowMessage('Register Success', 'success');
         dispatch({type: 'SET_LOADING', value: false});
         setTimeout(() => {
           navigation.replace('SuccessSignUp');
@@ -44,35 +72,8 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
       })
       .catch(err => {
         dispatch({type: 'SET_LOADING', value: false});
-        showToast(err?.response?.data?.data?.message);
+        ShowMessage(err?.response?.data?.data?.message);
       });
-  };
-
-  // Assuming MessageType is defined like this:
-  type MessageType = 'info' | 'warning'; // Example definition
-
-  // Define the custom type for the showToast function
-  type CustomToastType = 'success' | 'error';
-
-  const showToast = (message: string, type: CustomToastType = 'error') => {
-    // Convert CustomToastType to MessageType
-    let messageType: MessageType | undefined;
-    switch (type) {
-      case 'success':
-        messageType = 'info';
-        break;
-      case 'error':
-        messageType = 'warning';
-        break;
-      default:
-        messageType = undefined;
-    }
-
-    showMessage({
-      message,
-      type: messageType,
-      backgroundColor: type === 'success' ? '#1ABC9C' : '#D9435E',
-    });
   };
 
   const options = [

@@ -55,5 +55,9 @@
 	<string>assets/Fonts/Poppins-Light.ttf</string>
 	<!-- Add more fonts as needed -->
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need your permission to access your photo library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need your permission to use your camera</string>
 </dict>
 </plist>
