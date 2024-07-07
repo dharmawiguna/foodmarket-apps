@@ -2,11 +2,11 @@ import Axios from 'axios';
 import React from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Gap, Header, Select, TextInput} from '../../components';
-import {RootState} from '../../redux/store';
+import {AppDispatch, RootState} from '../../redux/store';
 import {useForm} from '../../utils';
 import constants from '../../utils/constants';
 
@@ -17,6 +17,8 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
   const registerReducer = useSelector(
     (state: RootState) => state.registerReducer,
   );
+
+  const dispatch = useDispatch<AppDispatch>();
   const [form, setForm] = useForm({
     phoneNumber: '',
     address: '',
@@ -30,15 +32,18 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
       ...registerReducer,
     };
 
+    dispatch({type: 'SET_LOADING', value: true});
     Axios.post(`${constants.DEFAULT_URL}/register`, data)
       .then(res => {
         console.log(res);
         showToast('Register Success', 'success');
+        dispatch({type: 'SET_LOADING', value: false});
         setTimeout(() => {
           navigation.replace('SuccessSignUp');
         }, 2000);
       })
       .catch(err => {
+        dispatch({type: 'SET_LOADING', value: false});
         showToast(err?.response?.data?.data?.message);
       });
   };

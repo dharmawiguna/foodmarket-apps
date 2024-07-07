@@ -11,6 +11,7 @@ import ItemListMenu from './ItemListMenu';
 import {ItemValue} from './ItemValue';
 import EmptyOrder from './EmptyOrder';
 import ProfileTabSection from './ProfileTabSection';
+import Loading from './Loading';
 
 export {
   Header,
@@ -26,4 +27,5 @@ export {
   OrderTabSection,
   ProfileTabSection,
   ItemListMenu,
+  Loading,
 };
