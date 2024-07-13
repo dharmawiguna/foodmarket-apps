@@ -4,6 +4,9 @@ import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {colors} from '../../../assets/Styles/Colors';
 import {Gs} from '../../../assets/Styles/GlobalStyle';
 import ItemListMenu from '../ItemListMenu';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../../types';
 
 const renderTabBar = (props: any) => (
   <TabBar
@@ -20,13 +23,19 @@ const renderTabBar = (props: any) => (
 );
 
 const Account = () => {
-  // const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const signOut = () => {
+    AsyncStorage.multiRemove(['userProfile', 'token']).then(() => {
+      navigation.reset({index: 0, routes: [{name: 'SignIn'}]});
+    });
+  };
   return (
     <View style={styles.tabPage}>
       <ItemListMenu text="Edit Profile" />
       <ItemListMenu text="Home Address" />
       <ItemListMenu text="Security" />
       <ItemListMenu text="Payments" />
+      <ItemListMenu text="Sign Out" onPress={signOut} />
     </View>
   );
 };

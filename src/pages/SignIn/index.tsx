@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {useDispatch} from 'react-redux';
 import {colors} from '../../assets/Styles/Colors';
 import {Button, Gap, Header, TextInput} from '../../components';
-import {useForm} from '../../utils';
-import Axios from 'axios';
+import {setLoading, signInAction} from '../../redux/action';
+import {AppDispatch} from '../../redux/store';
+import {getData, useForm} from '../../utils';
 interface SignInProps {
   navigation: any;
 }
@@ -12,16 +14,11 @@ export function SignIn({navigation}: SignInProps): JSX.Element {
     email: '',
     password: '',
   });
-
+  const dispatch = useDispatch<AppDispatch>();
   const onSubmit = () => {
-    Axios.post('http://127.0.0.1:8000/api/login', form)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    dispatch(signInAction(form, navigation));
   };
+
   return (
     <SafeAreaView style={styles.page}>
       <Header title="Sign In" subtitle="Find Your best ever meal" />

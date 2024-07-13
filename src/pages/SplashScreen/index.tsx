@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Logo} from '../../assets';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
+import {getData} from '../../utils';
 
 interface SplashScreenProps {
   navigation: any;
@@ -13,7 +14,13 @@ export default function SplashScreen({
 }: SplashScreenProps): JSX.Element {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('SignIn');
+      getData('token').then(res => {
+        if (res) {
+          navigation.reset({index: 0, routes: [{name: 'MainApp'}]});
+        } else {
+          navigation.replace('SignIn');
+        }
+      });
     }, 2000);
   }, [navigation]);
   return (

@@ -22,7 +22,9 @@ export function SuccessSignUp({navigation}: SuccessSignUpProps): JSX.Element {
       <View style={styles.buttonContainer}>
         <Button
           title="Find Foods"
-          onPress={() => navigation.replace('MainApp')}
+          onPress={() =>
+            navigation.reset({index: 0, routes: [{name: 'MainApp'}]})
+          }
         />
       </View>
     </SafeAreaView>

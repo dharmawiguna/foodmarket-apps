@@ -1,13 +1,12 @@
-import Axios from 'axios';
 import React from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Gap, Header, Select, TextInput} from '../../components';
+import {setLoading, signUpAction} from '../../redux/action';
 import {AppDispatch, RootState} from '../../redux/store';
-import {ShowMessage, useForm} from '../../utils';
-import constants from '../../utils/constants';
+import {useForm} from '../../utils';
 
 interface SignUpAddressProps {
   navigation: any;
@@ -17,8 +16,6 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
     (state: RootState) => state.registerReducer,
   );
   const photoReducer = useSelector((state: RootState) => state.photoReducer);
-
-  const {uri, isUploadPhoto} = photoReducer;
 
   // async function uriToBlob(newuri: string): Promise<Blob> {
   //   const response = await fetch(newuri);
@@ -40,40 +37,41 @@ export function SignUpAddress({navigation}: SignUpAddressProps): JSX.Element {
       ...registerReducer,
     };
 
-    dispatch({type: 'SET_LOADING', value: true});
-    Axios.post(`${constants.DEFAULT_URL}/register`, data)
-      .then(res => {
-        if (isUploadPhoto && uri) {
-          const photoFormUpload = new FormData();
-          photoFormUpload.append('file', photoReducer); // Appending the Blob to FormData
+    dispatch(setLoading(true));
+    dispatch(signUpAction(data, photoReducer, navigation));
+    // Axios.post(`${constants.DEFAULT_URL}/register`, data)
+    //   .then(res => {
+    //     if (isUploadPhoto && uri) {
+    //       const photoFormUpload = new FormData();
+    //       photoFormUpload.append('file', photoReducer); // Appending the Blob to FormData
 
-          const accessToken = res.data.data.access_token;
+    //       const accessToken = res.data.data.access_token;
 
-          Axios.post(`${constants.DEFAULT_URL}/user/photo`, photoFormUpload, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-            .then(resUpload => {
-              console.log('Success Upload:', resUpload);
-            })
-            .catch(err => {
-              ShowMessage('Upload Failed!');
-              console.log(err);
-            });
-        }
+    //       Axios.post(`${constants.DEFAULT_URL}/user/photo`, photoFormUpload, {
+    //         headers: {
+    //           Authorization: `Bearer ${accessToken}`,
+    //           'Content-Type': 'multipart/form-data',
+    //         },
+    //       })
+    //         .then(resUpload => {
+    //           console.log('Success Upload:', resUpload);
+    //         })
+    //         .catch(err => {
+    //           ShowMessage('Upload Failed!');
+    //           console.log(err);
+    //         });
+    //     }
 
-        ShowMessage('Register Success', 'success');
-        dispatch({type: 'SET_LOADING', value: false});
-        setTimeout(() => {
-          navigation.replace('SuccessSignUp');
-        }, 2000);
-      })
-      .catch(err => {
-        dispatch({type: 'SET_LOADING', value: false});
-        ShowMessage(err?.response?.data?.data?.message);
-      });
+    //     ShowMessage('Register Success', 'success');
+    //     dispatch(setLoading(false));
+    //     setTimeout(() => {
+    //       navigation.replace('SuccessSignUp');
+    //     }, 2000);
+    //   })
+    //   .catch(err => {
+    //     dispatch(setLoading(false));
+    //     ShowMessage(err?.response?.data?.data?.message);
+    //   });
   };
 
   const options = [
