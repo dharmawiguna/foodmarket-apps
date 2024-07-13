@@ -83,7 +83,7 @@ interface FormRegisterProps {
 
 export const signInAction =
   (form: FormRegisterProps, navigation: any) => (dispatch: any) => {
-    Axios.post(`${constants.DEFAULT_URL}/log78in`, form)
+    Axios.post(`${constants.DEFAULT_URL}/login`, form)
       .then(res => {
         const token = `Bearer ${res.data.data.access_token}`;
         const profile = res.data.data.user;
@@ -94,7 +94,7 @@ export const signInAction =
         navigation.reset({index: 0, routes: [{name: 'MainApp'}]});
       })
       .catch(err => {
-        showMessage(err?.response?.data?.message);
+        showMessage(err?.response?.data?.data?.message);
         dispatch(setLoading(false));
       });
   };
