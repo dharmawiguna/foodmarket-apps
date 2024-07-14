@@ -7,15 +7,20 @@ interface RatingProps {
   rating: number;
 }
 export function Rating({rating}: RatingProps): JSX.Element {
+  const renderStar = () => {
+    let star = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) {
+        star.push(<IcStarOn />);
+      } else {
+        star.push(<IcStarOff />);
+      }
+    }
+    return star;
+  };
   return (
     <View style={styles.ratingContainer}>
-      <View style={styles.starContainer}>
-        <IcStarOn />
-        <IcStarOn />
-        <IcStarOn />
-        <IcStarOn />
-        <IcStarOff />
-      </View>
+      <View style={styles.starContainer}>{renderStar()}</View>
       <Text>{rating}</Text>
     </View>
   );
@@ -24,8 +29,10 @@ export function Rating({rating}: RatingProps): JSX.Element {
 const styles = StyleSheet.create({
   ratingContainer: {
     ...Gs.flexRow,
+    ...Gs.itemsCenter,
   },
   starContainer: {
     ...Gs.flexRow,
+    marginRight: 4,
   },
 });

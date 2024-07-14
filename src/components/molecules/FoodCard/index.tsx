@@ -5,15 +5,17 @@ import {Rating} from '../Rating';
 
 interface FoodCardProps {
   image: any;
+  name: string;
+  rating: number;
 }
 
-export function FoodCard({image}: FoodCardProps): JSX.Element {
+export function FoodCard({image, name, rating}: FoodCardProps): JSX.Element {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.image} />
       <View style={styles.content}>
-        <Text style={styles.text}>Cherry Healthy</Text>
-        <Rating rating={5} />
+        <Text style={styles.text}>{name}</Text>
+        <Rating rating={rating} />
       </View>
     </View>
   );

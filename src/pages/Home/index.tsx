@@ -1,10 +1,19 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {FoodDummy1, FoodDummy2} from '../../assets/Dummy';
+import {useDispatch, useSelector} from 'react-redux';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {FoodCard, Gap, HomeProfile, HomeTabSection} from '../../components';
+import {getFoodData} from '../../redux/action';
+import {AppDispatch, RootState} from '../../redux/store';
+import {FoodItem} from '../../types';
 
 const Home = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {food} = useSelector((state: RootState) => state.homeReducer);
+  useEffect(() => {
+    dispatch(getFoodData());
+    // console.log('food', food);
+  }, [dispatch]);
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <View style={styles.page}>
@@ -13,9 +22,16 @@ const Home = () => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.foodCardContainer}>
               <Gap width={24} />
-              <FoodCard image={FoodDummy1} />
-              <FoodCard image={FoodDummy2} />
-              <FoodCard image={FoodDummy2} />
+              {food.map((item: FoodItem, index: number) => {
+                return (
+                  <FoodCard
+                    name={item.name}
+                    image={{uri: item?.picturePath}}
+                    key={index}
+                    rating={parseInt(item.rate, 10)}
+                  />
+                );
+              })}
             </View>
           </ScrollView>
         </View>
