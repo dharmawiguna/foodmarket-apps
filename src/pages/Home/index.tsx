@@ -12,7 +12,6 @@ const Home = () => {
   const {food} = useSelector((state: RootState) => state.homeReducer);
   useEffect(() => {
     dispatch(getFoodData());
-    // console.log('food', food);
   }, [dispatch]);
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>

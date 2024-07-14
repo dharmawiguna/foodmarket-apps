@@ -10,7 +10,6 @@ const HomeProfile = () => {
   useEffect(() => {
     const photoUrl = 'http://localhost:8000/storage/';
     getData('userProfile').then(res => {
-      console.log('userProfile', res);
       setPhoto({uri: photoUrl + res.profile_photo_path});
     });
   }, []);
