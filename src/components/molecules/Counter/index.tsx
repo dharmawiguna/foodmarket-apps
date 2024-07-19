@@ -25,7 +25,6 @@ export default function Counter({onValueChange}: CounterProps): JSX.Element {
         result = value - 1;
       }
     }
-    console.log('result', result);
     setValue(result);
     onValueChange(result);
   };
