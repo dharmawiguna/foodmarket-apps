@@ -7,7 +7,11 @@ import {getFoodData} from '../../redux/action';
 import {AppDispatch, RootState} from '../../redux/store';
 import {FoodItem} from '../../types';
 
-const Home = () => {
+interface HomeProps {
+  navigation: any;
+}
+
+export default function Home({navigation}: HomeProps): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const {food} = useSelector((state: RootState) => state.homeReducer);
   useEffect(() => {
@@ -28,6 +32,7 @@ const Home = () => {
                     image={{uri: item?.picturePath}}
                     key={index}
                     rating={parseInt(item.rate, 10)}
+                    onPress={() => navigation.navigate('FoodDetail', {item})}
                   />
                 );
               })}
@@ -40,9 +45,7 @@ const Home = () => {
       </View>
     </ScrollView>
   );
-};
-
-export default Home;
+}
 
 const styles = StyleSheet.create({
   page: {flex: 1},

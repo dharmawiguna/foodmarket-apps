@@ -3,6 +3,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from '../../../assets/Styles/Colors';
 import {Gs} from '../../../assets/Styles/GlobalStyle';
 import {Rating} from '../Rating';
+import CurrencyFormat from '../Number';
 
 type ItemType = 'product' | 'order-summary' | 'in-progress' | 'past-orders';
 
@@ -39,7 +40,7 @@ export default function ItemListFood({
           <>
             <View style={styles.pageTitle}>
               <Text style={styles.title}>{productName}</Text>
-              <Text style={styles.price}>IDR {price}</Text>
+              <Text style={styles.price}>IDR {CurrencyFormat(price)}</Text>
             </View>
             <Rating rating={rating} />
           </>

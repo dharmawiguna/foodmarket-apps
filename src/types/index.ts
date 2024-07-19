@@ -5,7 +5,7 @@ export type RootStackParamList = {
   SignUpAddress: undefined;
   SuccessSignUp: undefined;
   MainApp: undefined;
-  FoodDetail: undefined;
+  FoodDetail: {item: FoodItem};
   OrderSummary: undefined;
   SuccessOrder: undefined;
   OrderDetail: undefined;

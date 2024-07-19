@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -5,21 +6,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import {FoodDummy1} from '../../assets/Dummy';
 import {IcBackWhite} from '../../assets';
+import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Counter, Rating} from '../../components';
-import {colors} from '../../assets/Styles/Colors';
+import CurrencyFormat from '../../components/molecules/Number';
 
 interface FoodDetailProps {
   navigation: any;
+  route: any;
 }
 
-export function FoodDetail({navigation}: FoodDetailProps): JSX.Element {
+export function FoodDetail({navigation, route}: FoodDetailProps): JSX.Element {
+  const {name, picturePath, description, ingredients, rate, price} =
+    route?.params.item;
+
+  const [totalItem, setTotalItem] = useState<number>(1);
+
+  const onCounterChange = (value: number) => {
+    setTotalItem(value);
+  };
+
   return (
     <View style={styles.page}>
-      <ImageBackground source={FoodDummy1} style={styles.imageCover}>
+      <ImageBackground source={{uri: picturePath}} style={styles.imageCover}>
         <TouchableOpacity
           style={styles.backIcon}
           onPress={() => navigation.goBack()}>
@@ -30,23 +40,21 @@ export function FoodDetail({navigation}: FoodDetailProps): JSX.Element {
         <View style={styles.mainContent}>
           <View style={styles.productContainer}>
             <View>
-              <Text style={styles.foodName}>Cherry Healthy</Text>
-              <Rating rating={3} />
+              <Text style={styles.foodName}>{name}</Text>
+              <Rating rating={rate} />
             </View>
-            <Counter />
+            <Counter onValueChange={onCounterChange} />
           </View>
-          <Text style={styles.foodDesc}>
-            Makanan khas Bandung yang cukup sering dipesan oleh anak muda dengan
-            pola makan yang cukup tinggi dengan mengutamakan diet yang sehat dan
-            teratur.
-          </Text>
+          <Text style={styles.foodDesc}>{description}</Text>
           <Text style={styles.foodLabel}>Ingredients</Text>
-          <Text style={styles.foodDesc}>Seledri, telur, blueberry, madu.</Text>
+          <Text style={styles.foodDesc}>{ingredients}</Text>
         </View>
         <View style={styles.foodFooter}>
           <View style={styles.priceContainer}>
             <Text style={styles.labelTotal}>Total Price:</Text>
-            <Text style={styles.priceTotal}>12.000.000</Text>
+            <Text style={styles.priceTotal}>
+              IDR {CurrencyFormat(totalItem * price)}
+            </Text>
           </View>
           <View style={styles.button}>
             <Button
@@ -129,7 +137,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   priceTotal: {
-    fontSize: 13,
+    fontSize: 18,
     fontWeight: 500,
     color: colors.black,
   },

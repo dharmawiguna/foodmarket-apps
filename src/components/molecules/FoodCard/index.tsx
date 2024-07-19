@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from '../../../assets/Styles/Colors';
 import {Rating} from '../Rating';
 
@@ -7,17 +7,25 @@ interface FoodCardProps {
   image: any;
   name: string;
   rating: number;
+  onPress: () => void;
 }
 
-export function FoodCard({image, name, rating}: FoodCardProps): JSX.Element {
+export function FoodCard({
+  image,
+  name,
+  rating,
+  onPress,
+}: FoodCardProps): JSX.Element {
   return (
-    <View style={styles.container}>
-      <Image source={image} style={styles.image} />
-      <View style={styles.content}>
-        <Text style={styles.text}>{name}</Text>
-        <Rating rating={rating} />
+    <TouchableOpacity onPress={onPress} activeOpacity={0.2}>
+      <View style={styles.container}>
+        <Image source={image} style={styles.image} />
+        <View style={styles.content}>
+          <Text style={styles.text}>{name}</Text>
+          <Rating rating={rating} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
