@@ -1,15 +1,20 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {Button, Header, ItemListFood, ItemValue} from '../../components';
-import {FoodDummy1} from '../../assets/Dummy';
-import {Gs} from '../../assets/Styles/GlobalStyle';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../../assets/Styles/Colors';
+import {Gs} from '../../assets/Styles/GlobalStyle';
+import {Button, Header, ItemListFood, ItemValue} from '../../components';
+import CurrencyFormat from '../../components/molecules/Number';
 
 interface OrderSummaryProps {
   navigation: any;
+  route: any;
 }
 
-export function OrderSummary({navigation}: OrderSummaryProps): JSX.Element {
+export function OrderSummary({
+  navigation,
+  route,
+}: OrderSummaryProps): JSX.Element {
+  const {item, transaction, userProfile} = route.params;
   return (
     <ScrollView>
       <View style={styles.headerContainer}>
@@ -19,25 +24,38 @@ export function OrderSummary({navigation}: OrderSummaryProps): JSX.Element {
         <Text style={styles.label}>Item Ordered</Text>
         <ItemListFood
           type="order-summary"
-          productName="Soup Buntut"
-          price={1209000}
-          items="14"
-          image={FoodDummy1}
+          productName={item.name}
+          price={item.price}
+          items={transaction.totalItem}
+          image={{uri: item.picturePath}}
         />
         <Text style={styles.label}>Details Transaction</Text>
-        <ItemValue label="Cherry Healthy" value="IDR 400.000" />
-        <ItemValue label="Driver" value="IDR 500.000" />
-        <ItemValue label="Tax 10%" value="IDR 50.000" />
-        <ItemValue label="Total Price" value="IDR 950.000" valueColor />
+        <ItemValue
+          label={item.name}
+          value={`IDR ${CurrencyFormat(transaction.totalPrice)}`}
+        />
+        <ItemValue
+          label="Driver"
+          value={`IDR ${CurrencyFormat(transaction.driver)}`}
+        />
+        <ItemValue
+          label="Tax 10%"
+          value={`IDR ${CurrencyFormat(transaction.tax)}`}
+        />
+        <ItemValue
+          label="Total Price"
+          value={`IDR ${CurrencyFormat(transaction.total)}`}
+          valueColor
+        />
       </View>
 
       <View style={styles.content}>
         <Text style={styles.label}>Delivere To</Text>
-        <ItemValue label="Name" value="Dharma Wiguna" />
-        <ItemValue label="Phone No." value="0912312323" />
-        <ItemValue label="Address" value="Kesiman" />
-        <ItemValue label="House No" value="5" />
-        <ItemValue label="City" value="Denpasar" />
+        <ItemValue label="Name" value={userProfile.name} />
+        <ItemValue label="Phone No." value={userProfile.phoneNumber} />
+        <ItemValue label="Address" value={userProfile.address} />
+        <ItemValue label="House No" value={userProfile.houseNumber} />
+        <ItemValue label="City" value={userProfile.city} />
       </View>
       <View style={styles.footer}>
         <Button

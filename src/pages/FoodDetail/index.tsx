@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -11,6 +11,7 @@ import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {Button, Counter, Rating} from '../../components';
 import CurrencyFormat from '../../components/molecules/Number';
+import {getData} from '../../utils';
 
 interface FoodDetailProps {
   navigation: any;
@@ -22,9 +23,41 @@ export function FoodDetail({navigation, route}: FoodDetailProps): JSX.Element {
     route?.params.item;
 
   const [totalItem, setTotalItem] = useState<number>(1);
+  const [userProfile, setUserProfile] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    getData('userProfile').then((res: any) => {
+      setUserProfile(res);
+    });
+  }, []);
 
   const onCounterChange = (value: number) => {
     setTotalItem(value);
+  };
+
+  const onOrder = () => {
+    const totalPrice = totalItem * price;
+    const driver = 50000;
+    const tax = (10 / 100) * totalPrice;
+    const total = totalPrice + driver + tax;
+
+    const data = {
+      item: {
+        name,
+        price,
+        picturePath,
+      },
+      transaction: {
+        totalItem,
+        totalPrice,
+        driver,
+        tax,
+        total,
+      },
+      userProfile,
+    };
+
+    navigation.navigate('OrderSummary', data);
   };
 
   return (
@@ -57,10 +90,7 @@ export function FoodDetail({navigation, route}: FoodDetailProps): JSX.Element {
             </Text>
           </View>
           <View style={styles.button}>
-            <Button
-              title="Order Now"
-              onPress={() => navigation.navigate('OrderSummary')}
-            />
+            <Button title="Order Now" onPress={onOrder} />
           </View>
         </View>
       </View>
