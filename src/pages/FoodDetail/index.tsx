@@ -19,7 +19,7 @@ interface FoodDetailProps {
 }
 
 export function FoodDetail({navigation, route}: FoodDetailProps): JSX.Element {
-  const {name, picturePath, description, ingredients, rate, price} =
+  const {id, name, picturePath, description, ingredients, rate, price} =
     route?.params.item;
 
   const [totalItem, setTotalItem] = useState<number>(1);
@@ -43,6 +43,7 @@ export function FoodDetail({navigation, route}: FoodDetailProps): JSX.Element {
 
     const data = {
       item: {
+        id,
         name,
         price,
         picturePath,

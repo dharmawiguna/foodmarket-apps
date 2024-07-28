@@ -1,15 +1,44 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {Button, Header, ItemListFood, ItemValue} from '../../components';
-import {FoodDummy1} from '../../assets/Dummy';
-import {Gs} from '../../assets/Styles/GlobalStyle';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../../assets/Styles/Colors';
+import {Gs} from '../../assets/Styles/GlobalStyle';
+import {Button, Header, ItemListFood, ItemValue} from '../../components';
+import CurrencyFormat from '../../components/molecules/Number';
+import Axios from 'axios';
+import constants from '../../utils/constants';
+import {getData} from '../../utils';
 
 interface OrderDetailProps {
   navigation: any;
+  route: any;
 }
 
-export function OrderDetail({navigation}: OrderDetailProps): JSX.Element {
+export function OrderDetail({
+  route,
+  navigation,
+}: OrderDetailProps): JSX.Element {
+  const order = route.params.order;
+
+  const onCancel = () => {
+    const data = {
+      status: 'CANCELLED',
+    };
+    getData('token').then(resToken => {
+      Axios.post(`${constants.DEFAULT_URL}/transaction/${order.id}`, data, {
+        headers: {
+          Authorization: resToken.value,
+        },
+      })
+        .then(res => {
+          console.log('cancel ordder', res);
+          navigation.reset({index: 0, routes: [{name: 'MainApp'}]});
+        })
+        .catch(err => {
+          console.log('err cancel order', err);
+        });
+    });
+  };
+
   return (
     <ScrollView>
       <View style={styles.headerContainer}>
@@ -19,39 +48,54 @@ export function OrderDetail({navigation}: OrderDetailProps): JSX.Element {
         <Text style={styles.label}>Item Ordered</Text>
         <ItemListFood
           type="order-summary"
-          productName="Soup Buntut"
-          price={1209000}
-          items="14"
-          image={FoodDummy1}
+          productName={order.food.name}
+          price={order.food.price}
+          items={order.quantity}
+          image={{uri: order.food.picturePath}}
         />
         <Text style={styles.label}>Details Transaction</Text>
-        <ItemValue label="Cherry Healthy" value="IDR 400.000" />
+        <ItemValue
+          label={order.food.name}
+          value={CurrencyFormat(order.food.price * order.quantity)}
+          currency
+        />
         <ItemValue label="Driver" value="IDR 500.000" />
-        <ItemValue label="Tax 10%" value="IDR 50.000" />
-        <ItemValue label="Total Price" value="IDR 950.000" valueColor />
+        <ItemValue
+          label="Tax 10%"
+          value={CurrencyFormat((10 / 100) * order.total)}
+          currency
+        />
+        <ItemValue
+          label="Total Price"
+          value={CurrencyFormat(order.total)}
+          valueColor
+          currency
+        />
       </View>
 
       <View style={styles.content}>
         <Text style={styles.label}>Delivere To</Text>
-        <ItemValue label="Name" value="Dharma Wiguna" />
-        <ItemValue label="Phone No." value="0912312323" />
-        <ItemValue label="Address" value="Kesiman" />
-        <ItemValue label="House No" value="5" />
-        <ItemValue label="City" value="Denpasar" />
+        <ItemValue label="Name" value={order.user.name} />
+        <ItemValue label="Phone No." value={order.user.phoneNumber} />
+        <ItemValue label="Address" value={order.user.address} />
+        <ItemValue label="House No" value={order.user.houseNumber} />
+        <ItemValue label="City" value={order.user.city} />
       </View>
 
       <View style={styles.content}>
         <Text style={styles.label}>Order Status</Text>
-        <ItemValue label="#123ERASD" value="Paid" valueColor />
+        <ItemValue label={`#${order.id}`} value={order.status} />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title="Cancel My Order"
-          onPress={() => navigation.replace('SuccessOrder')}
-          color="#D9435E"
-          textColor="white"
-        />
-      </View>
+      {order.status === 'PENDING' && (
+        <View style={styles.footer}>
+          <Button
+            title="Cancel My Order"
+            onPress={onCancel}
+            color="#D9435E"
+            textColor="white"
+          />
+        </View>
+      )}
     </ScrollView>
   );
 }

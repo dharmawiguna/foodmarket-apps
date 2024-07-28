@@ -1,21 +1,32 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {ProfileDummy} from '../../assets/Dummy';
 import {colors} from '../../assets/Styles/Colors';
 import {Gs} from '../../assets/Styles/GlobalStyle';
 import {ProfileTabSection} from '../../components';
+import {getData} from '../../utils';
 
 const Profile = () => {
+  const [userProfile, setUserProfile] = useState<Record<string, any>>({});
+  const [photo, setPhoto] = useState<{uri: string}>({uri: ProfileDummy});
+
+  useEffect(() => {
+    const photoUrl = 'http://localhost:8000/storage/';
+    getData('userProfile').then(res => {
+      setPhoto({uri: photoUrl + res.profile_photo_path});
+      setUserProfile(res);
+    });
+  }, []);
   return (
     <View style={styles.page}>
       <View style={styles.profileDetail}>
         <View style={styles.photo}>
           <View style={styles.borderPhoto}>
-            <Image source={ProfileDummy} style={styles.photoContainer} />
+            <Image source={photo} style={styles.photoContainer} />
           </View>
         </View>
-        <Text style={styles.name}>Dharma Wiguna</Text>
-        <Text style={styles.email}>dharmawiguna982@gmail.com</Text>
+        <Text style={styles.name}>{userProfile.name}</Text>
+        <Text style={styles.email}>{userProfile.email}</Text>
       </View>
       <View style={styles.content}>
         <ProfileTabSection />

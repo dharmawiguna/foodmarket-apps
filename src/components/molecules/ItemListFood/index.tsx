@@ -4,13 +4,15 @@ import {colors} from '../../../assets/Styles/Colors';
 import {Gs} from '../../../assets/Styles/GlobalStyle';
 import {Rating} from '../Rating';
 import CurrencyFormat from '../Number';
+import moment from 'moment';
 
 type ItemType = 'product' | 'order-summary' | 'in-progress' | 'past-orders';
+type Status = 'CANCELLED' | 'DELIVERED' | 'SUCCESS' | 'PENDING' | 'ON_DELIVER';
 
 interface ItemListFoodProps {
   image: any;
   onPress?: () => void;
-  items?: string;
+  items?: number;
   rating?: number;
   inProgress?: boolean;
   orderItems?: string;
@@ -18,9 +20,15 @@ interface ItemListFoodProps {
   type: ItemType;
   price?: number;
   productName?: string;
-  date?: string;
-  status?: string;
+  date?: number | undefined;
+  status?: Status;
 }
+
+const getStatusStyle = (status: Status) => ({
+  fontSize: 10,
+  fontWeight: '300' as '300',
+  color: status === 'CANCELLED' ? '#D9435E' : '#1ABC9C',
+});
 
 export default function ItemListFood({
   image,
@@ -50,7 +58,7 @@ export default function ItemListFood({
           <>
             <View style={styles.pageTitle}>
               <Text style={styles.title}>{productName}</Text>
-              <Text style={styles.price}>IDR {price}</Text>
+              <Text style={styles.price}>IDR {CurrencyFormat(price)}</Text>
             </View>
             <Text style={styles.items}>{items} items</Text>
           </>
@@ -60,24 +68,31 @@ export default function ItemListFood({
           <>
             <View style={styles.pageTitle}>
               <Text style={styles.title}>{productName}</Text>
-              <Text style={styles.items}>
-                {items} items . IDR {price}
-              </Text>
+              <View style={styles.row}>
+                <Text style={styles.items}>{items} items</Text>
+                <View style={styles.dot} />
+                <Text>IDR {CurrencyFormat(price)}</Text>
+              </View>
             </View>
           </>
         );
       case 'past-orders':
+        // const formattedDate = new Date(date).toLocaleDateString();
         return (
           <>
             <View style={styles.pageTitle}>
               <Text style={styles.title}>{productName}</Text>
-              <Text style={styles.items}>
-                {items} items . IDR {price}
-              </Text>
+              <View style={styles.row}>
+                <Text style={styles.items}>{items} items</Text>
+                <View style={styles.dot} />
+                <Text>IDR {CurrencyFormat(price)}</Text>
+              </View>
             </View>
             <View>
-              <Text style={styles.date}>{date}</Text>
-              <Text style={styles.status}>{status}</Text>
+              <Text style={styles.date}>
+                {moment.unix(date!).format('DD MMMM YYYY')}
+              </Text>
+              <Text style={getStatusStyle(status!)}>{status}</Text>
             </View>
           </>
         );
@@ -140,9 +155,15 @@ const styles = StyleSheet.create({
     fontWeight: 300,
     color: colors.grey,
   },
-  status: {
-    fontSize: 10,
-    fontWeight: 300,
-    color: '#D9435E',
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dot: {
+    width: 3,
+    height: 3,
+    borderRadius: 3,
+    backgroundColor: '#8D92A3',
+    marginHorizontal: 4,
   },
 });

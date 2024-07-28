@@ -7,17 +7,21 @@ interface ItemValueProps {
   label: string;
   value: string;
   valueColor?: boolean;
+  currency?: boolean;
 }
 
 export function ItemValue({
   label,
   value,
   valueColor,
+  currency,
 }: ItemValueProps): JSX.Element {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={valueColor ? styles.valueColor : styles.value}>{value}</Text>
+      <Text style={valueColor ? styles.valueColor : styles.value}>
+        {currency && 'IDR'} {value}
+      </Text>
     </View>
   );
 }
@@ -42,5 +46,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 500,
     color: '#1ABC9D',
+  },
+  redColor: {
+    fontSize: 14,
+    fontWeight: 500,
+    color: '#D9435E',
   },
 });
