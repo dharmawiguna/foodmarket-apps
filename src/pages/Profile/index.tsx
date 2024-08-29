@@ -11,9 +11,9 @@ const Profile = () => {
   const [photo, setPhoto] = useState<{uri: string}>({uri: ProfileDummy});
 
   useEffect(() => {
-    const photoUrl = 'http://localhost:8000/storage/';
     getData('userProfile').then(res => {
-      setPhoto({uri: photoUrl + res.profile_photo_path});
+      // setPhoto({uri: photoUrl + res.profile_photo_url});
+      setPhoto({uri: res.profile_photo_url});
       setUserProfile(res);
     });
   }, []);

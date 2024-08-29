@@ -8,9 +8,11 @@ import {getData} from '../../../utils';
 const HomeProfile = () => {
   const [photo, setPhoto] = useState<{uri: string}>({uri: ProfileDummy});
   useEffect(() => {
-    const photoUrl = 'http://localhost:8000/storage/';
+    // const photoUrl = 'http://localhost:8000/storage/';
     getData('userProfile').then(res => {
-      setPhoto({uri: photoUrl + res.profile_photo_path});
+      // setPhoto({uri: photoUrl + res.profile_photo_url});
+      setPhoto({uri: res.profile_photo_url});
+      console.log(res);
     });
   }, []);
   return (
@@ -51,6 +53,6 @@ const styles = StyleSheet.create({
   profile: {
     width: 50,
     height: 50,
-    borderRadius: 8,
+    borderRadius: 50,
   },
 });

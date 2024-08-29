@@ -75,11 +75,11 @@ export function OrderDetail({
 
       <View style={styles.content}>
         <Text style={styles.label}>Delivere To</Text>
-        <ItemValue label="Name" value={order.user.name} />
-        <ItemValue label="Phone No." value={order.user.phoneNumber} />
-        <ItemValue label="Address" value={order.user.address} />
-        <ItemValue label="House No" value={order.user.houseNumber} />
-        <ItemValue label="City" value={order.user.city} />
+        <ItemValue label="Name" value={order.user.name ?? '-'} />
+        <ItemValue label="Phone No." value={order.user.phoneNumber ?? '-'} />
+        <ItemValue label="Address" value={order.user.address ?? '-'} />
+        <ItemValue label="House No" value={order.user.houseNumber ?? '-'} />
+        <ItemValue label="City" value={order.user.city ?? '-'} />
       </View>
 
       <View style={styles.content}>
